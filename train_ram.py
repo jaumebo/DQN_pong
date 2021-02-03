@@ -45,7 +45,8 @@ lr = 1e-4  # learning rate
 eps_start = 1.0  # initial value for epsilon (in epsilon-greedy)
 eps_end = 0.02  # final value for epsilon (in epsilon-greedy)
 eps_decay = 1000000  # length of epsilon decay
-target_update = 1000  # how often to update target net, in env steps
+target_update = 100  # how often to update target net, in env steps, previous 1000
+memory_size = 500000 # how many steps we keep in memory, previous 100000
 
 # Create environment
 env = gym.make(env_name)
@@ -60,13 +61,13 @@ n_inputs = env.observation_space.shape[0]
 n_actions = env.action_space.n
 
 # Create Policy Networks
-policy_net = DQN(n_inputs, n_actions).to(device)
-target_net = DQN(n_inputs, n_actions).to(device)
+policy_net = DQN_ram(n_inputs, n_actions).to(device)
+target_net = DQN_ram(n_inputs, n_actions).to(device)
 target_net.load_state_dict(policy_net.state_dict())
 target_net.eval()
 
 optimizer = torch.optim.Adam(policy_net.parameters(), lr=lr)
-memory = ReplayMemory(10000)
+memory = ReplayMemory(memory_size)
 
 step_count = 0
 ep_rew_history = []

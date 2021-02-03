@@ -2,6 +2,7 @@ import math
 import random
 from collections import namedtuple
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -19,7 +20,7 @@ class ReplayMemory(object):
         if len(self.memory) < self.capacity:
             self.memory.append(None)
         self.memory[self.position] = Transition(*args)
-        # TODO: Update the pointer to the next position in the replay memory
+        # Update the pointer to the next position in the replay memory
         self.position = (self.position + 1) % self.capacity
 
     def sample(self, batch_size):
@@ -28,9 +29,32 @@ class ReplayMemory(object):
     def __len__(self):
         return len(self.memory)
 
-class DQN(nn.Module):
+class DQN_img(nn.Module):
+    def __init__(self, in_channels, outputs):
+        super(DQN_img, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels,32,kernel_size=8,stride=4)
+        self.conv2 = nn.Conv2d(32,64,kernel_size=4,stride=2)
+        self.conv3 = nn.Conv2d(64,64,kernel_size=3,stride=1)
+        self.fc1 = nn.Linear(22528,512)
+        self.fc2 = nn.Linear(512,outputs)
+
+    def forward(self, x):
+        x = x.float() / 255
+        x = self.conv1(x)
+        x = F.relu(x)
+        x = self.conv2(x)
+        x = F.relu(x)
+        x = self.conv3(x)
+        x = F.relu(x)
+        x = x.view(x.size(0),-1)
+        x = self.fc1(x)
+        x = F.relu(x)
+        x = self.fc2(x)
+        return x
+
+class DQN_ram(nn.Module):
     def __init__(self, inputs, outputs):
-        super(DQN, self).__init__()
+        super(DQN_ram, self).__init__()
         self.fc1 = nn.Linear(inputs, 256)
         self.fc2 = nn.Linear(256, 128)
         self.fc3 = nn.Linear(128, 64)
@@ -45,6 +69,12 @@ class DQN(nn.Module):
         x = F.relu(x)
         x = self.fc4(x)
         return x
+
+def get_state_img(obs):
+    state = np.array(obs)
+    state = state.transpose((2, 0, 1))
+    state = torch.from_numpy(state)
+    return state.unsqueeze(0)
 
 def compute_eps_threshold(step, eps_start, eps_end, eps_decay):
   return eps_end + (eps_start - eps_end) * math.exp(-1. * step / eps_decay)
@@ -76,7 +106,7 @@ def train(policy_net, target_net, optimizer, memory, batch_size, gamma, device):
         dtype=torch.bool)
     non_final_next_states = torch.cat(
         [s for s in batch.next_state if s is not None])
-    state_batch = torch.cat(batch.state)
+    state_batch = torch.cat(batch.state).to(device)
     action_batch = torch.cat(batch.action)
     reward_batch = torch.cat(batch.reward)
 

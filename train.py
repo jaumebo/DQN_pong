@@ -44,7 +44,7 @@ batch_size = 32  # batch size for optimization
 lr = 1e-4  # learning rate
 eps_start = 1.0  # initial value for epsilon (in epsilon-greedy)
 eps_end = 0.02  # final value for epsilon (in epsilon-greedy)
-eps_decay = 2000000  # length of epsilon decay
+eps_decay = 1000000  # length of epsilon decay
 target_update = 1000  # how often to update target net, in env steps
 
 # Create environment

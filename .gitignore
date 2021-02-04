@@ -129,8 +129,8 @@ dmypy.json
 .pyre/
 
 # Specifics
-*.gif
-*.pt
+#*.gif
+#*.pt
 .DS_Store
 .vscode/*
 logs/*

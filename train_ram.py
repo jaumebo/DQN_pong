@@ -29,6 +29,8 @@ current_time = t.strftime("%Y_%m_%d-%H_%M_%S")
 
 os.makedirs('gifs/' + current_time)
 os.makedirs('checkpoints/' + current_time)
+os.makedirs('checkpoints/' + current_time + '/last/')
+os.makedirs('checkpoints/' + current_time + '/best/')
 writer = SummaryWriter('logs/' + current_time)
 
 
@@ -44,9 +46,9 @@ batch_size = 32  # batch size for optimization
 lr = 1e-4  # learning rate
 eps_start = 1.0  # initial value for epsilon (in epsilon-greedy)
 eps_end = 0.02  # final value for epsilon (in epsilon-greedy)
-eps_decay = 1000000  # length of epsilon decay
-target_update = 100  # how often to update target net, in env steps, previous 1000
-memory_size = 500000 # how many steps we keep in memory, previous 100000
+eps_decay = 1000000  # length of epsilon decay, previous 1000000
+target_update = 100  # how often to update target net, in env steps, previous 1000, 100
+memory_size = 500000 # how many steps we keep in memory, previous 100000, 500000
 
 # Create environment
 env = gym.make(env_name)
@@ -75,6 +77,7 @@ i_episode = 0
 ep_reward = -float('inf')
 sum_reward = 0
 avg_reward = 0
+best_avg_reward = 0
 
 while i_episode < num_episodes:
     # Initialize the environment and state
@@ -82,6 +85,8 @@ while i_episode < num_episodes:
     done = False
     state = torch.from_numpy(state).float().unsqueeze(0).to(device)
     episode_reward = 0
+    win_points = 0
+    lose_points = 0
 
     while not done:
         # Select an action
@@ -90,6 +95,15 @@ while i_episode < num_episodes:
 
         # Perform action in env
         next_state, reward, done, _ = env.step(action.item())
+
+        if reward == -1:
+            lose_points += 1
+        elif reward == 1:
+            win_points += 1
+        
+        if win_points==3 or lose_points==3:
+            done = True
+            next_state = None
 
         # Bookkeeping
         next_state = torch.from_numpy(next_state).float().unsqueeze(0).to(device)
@@ -124,7 +138,12 @@ while i_episode < num_episodes:
         print('Episode {}\tSteps: {:.2f}k''\tAvg reward: {:.2f}''\tEval reward: {:.2f}'.format(i_episode, step_count/1000., avg_reward, ep_reward))
 
     if i_episode % model_save_interval == 0 or i_episode >= num_episodes:
-        torch.save(policy_net.state_dict(), 'checkpoints/' + current_time  + '/dqn-{}.pt'.format(env_name))
+        torch.save(policy_net.state_dict(), 'checkpoints/' + current_time  + '/last/last_dqn-{}.pt'.format(env_name))
+        print("Saved model checkpoint")
+    
+    if avg_reward>best_avg_reward:
+        best_avg_reward = avg_reward
+        torch.save(policy_net.state_dict(), 'checkpoints/' + current_time  + '/best/best_dqn-{}.pt'.format(env_name))
         print("Saved model checkpoint")
 
 print("Finished training! Eval reward: {:.2f}".format(ep_reward))

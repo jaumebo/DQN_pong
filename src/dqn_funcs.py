@@ -140,10 +140,7 @@ def train(policy_net, target_net, optimizer, memory, batch_size, gamma, device):
     
 
 def reward_shaper(rew, done):
-    # The default reward is +1 for any (s,a) pair. We can make the task easier
-    # by giving a negative reward (e.g. -10) when the pole falls.
-    # You can try modifying/removing this reward shaping and see what happens.
-    # This is a clear example of the importance of reward in RL.
+    # Function ready to shape the reward if needed
     return rew
 
 

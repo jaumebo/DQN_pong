@@ -3,7 +3,7 @@ import gym
 # Choose the Cart-Pole environment from the OpenAI Gym
 
 
-env = gym.make("Pong-v0")
+env = gym.make("Pong-ram-v0")
 obs = env.reset()
 
 # Initialize the variables done (breaks loop) and total_rew (reward)
@@ -27,7 +27,7 @@ while not done:
     #Obtain the new state, reward and whether the episode has terminated
     obs, rew, done, info = env.step(ac)
     obs_image = env.render(mode="rgb_array")
-
+    
     if rew == -1:
         lose_points += 1
     if rew == 1:
@@ -35,13 +35,13 @@ while not done:
     
     if win_points==3 or lose_points==3:
         done = True
-
+    
     images.append(obs_image)
 
     # Accumulate the reward
     total_rew += rew
-    
 
+    
 print(total_rew)
 
 env.close()

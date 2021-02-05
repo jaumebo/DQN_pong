@@ -36,7 +36,6 @@ writer = SummaryWriter('logs/' + current_time)
 
 #Hyperparameters
 env_name = 'Pong-ram-v0'
-#env_name = 'CartPole-v1'
 gamma = 0.99  # discount factor
 seed = 123  # random seed
 log_interval = 50  # controls how often we log progress, in episodes
@@ -103,7 +102,6 @@ while i_episode < num_episodes:
         
         if win_points==3 or lose_points==3:
             done = True
-            next_state = None
 
         # Bookkeeping
         next_state = torch.from_numpy(next_state).float().unsqueeze(0).to(device)

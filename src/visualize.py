@@ -13,6 +13,8 @@ def test_gif(device,policy_net=None,path='test.gif',env_name="Pong-ram-v0"):
     # Initialize the variables done (breaks loop) and total_rew (reward)
     done = False
     total_rew = 0
+    lose_points = 0
+    win_points = 0
 
     images = []
 
@@ -30,6 +32,14 @@ def test_gif(device,policy_net=None,path='test.gif',env_name="Pong-ram-v0"):
         #Obtain the new state, reward and whether the episode has terminated
         obs, rew, done, info = env.step(ac)
         obs_image = env.render(mode="rgb_array")
+
+        if reward == -1:
+            lose_points += 1
+        elif reward == 1:
+            win_points += 1
+        
+        if win_points==3 or lose_points==3:
+            done = True
 
         images.append(obs_image)
 

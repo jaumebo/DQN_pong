@@ -76,7 +76,7 @@ i_episode = 0
 ep_reward = -float('inf')
 sum_reward = 0
 avg_reward = 0
-best_avg_reward = 0
+best_avg_reward = -100
 
 while i_episode < num_episodes:
     # Initialize the environment and state

@@ -76,8 +76,38 @@ def get_state_img(obs):
     state = torch.from_numpy(state)
     return state.unsqueeze(0)
 
-def compute_eps_threshold(step, eps_start, eps_end, eps_decay):
-  return eps_end + (eps_start - eps_end) * math.exp(-1. * step / eps_decay)
+class epsilon_scheduler():
+    
+    def __init__(self, 
+                eps_start=1, 
+                eps_mid_end=0.1, 
+                eps_end=0.01, 
+                exploration_frames=1000000, 
+                smoothed_final_frames=25000000,
+                memory_start_capacity=1000):
+        
+        self.eps_start = eps_start
+        self.eps_mid_end = eps_mid_end
+        self.eps_end = eps_end
+        self.exploration_frames = exploration_frames
+        self.smoothed_final_frames = smoothed_final_frames
+        self.memory_start_capacity = memory_start_capacity
+
+        self.slope1 = -(self.eps_start - self.eps_mid_end)/self.exploration_frames
+        self.slope2 = -(self.eps_mid_end - self.eps_end)/(self.smoothed_final_frames - self.exploration_frames - self.memory_start_capacity)
+
+    def get_epsilon(self,step):
+
+        corrected_step = max(0,step - self.memory_start_capacity)
+
+        if step<=(self.exploration_frames+self.memory_start_capacity):
+            epsilon = self.eps_start + (corrected_step*self.slope1)
+        elif step>(self.exploration_frames+self.memory_start_capacity) and step<(self.exploration_frames+self.smoothed_final_frames+self.memory_start_capacity):
+            epsilon = self.eps_mid_end + (corrected_step*self.slope2)
+        else:
+            epsilon = self.eps_end
+        
+        return epsilon
 
 
 def select_action(policy, state, eps_greedy_threshold, n_actions, device):
@@ -92,8 +122,6 @@ def select_action(policy, state, eps_greedy_threshold, n_actions, device):
     return action
 
 def train(policy_net, target_net, optimizer, memory, batch_size, gamma, device):
-    if len(memory) < batch_size:
-        return False
     transitions = memory.sample(batch_size)
     # This converts batch-array of Transitions to Transition of batch-arrays.
     batch = Transition(*zip(*transitions))

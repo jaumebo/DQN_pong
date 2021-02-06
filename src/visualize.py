@@ -33,9 +33,9 @@ def test_gif(device,policy_net=None,path='test.gif',env_name="Pong-ram-v0"):
         obs, rew, done, info = env.step(ac)
         obs_image = env.render(mode="rgb_array")
 
-        if reward == -1:
+        if rew == -1:
             lose_points += 1
-        elif reward == 1:
+        elif rew == 1:
             win_points += 1
         
         if win_points==3 or lose_points==3:

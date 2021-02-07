@@ -92,25 +92,24 @@ while i_episode < num_episodes:
         action = select_action(policy_net, state, eps_greedy_threshold, n_actions, device)
 
         # Perform action in env for "skip_frames" number of times
-        skip_reward = 0
-        for i in range(skip_frames):
-            next_state, reward, done, _ = env.step(action.item())
-            skip_reward += reward
+        for _ in range(skip_frames):
+            next_state, reward, done, _ = env.step(action.item())            
+
+            # Bookkeeping
+            next_state = torch.from_numpy(next_state).float().unsqueeze(0).to(device)
+            reward = reward_shaper(reward, done)
+            episode_reward += reward
+            reward = torch.tensor([reward], device=device)
+            step_count += 1
+
+            # Store the transition in memory
+            memory.push(state, action, next_state, reward)
+
+            # Move to the next state
+            state = next_state
+
             if done:
                 break
-
-        # Bookkeeping
-        next_state = torch.from_numpy(next_state).float().unsqueeze(0).to(device)
-        episode_reward += skip_reward
-        skip_reward = reward_shaper(skip_reward, done)
-        reward = torch.tensor([skip_reward], device=device)
-        step_count += 1
-
-        # Store the transition in memory
-        memory.push(state, action, next_state, reward)
-
-        # Move to the next state
-        state = next_state
 
         if step_count<memory_start_size:
             continue

@@ -35,8 +35,8 @@ class DQN_img(nn.Module):
         self.conv1 = nn.Conv2d(in_channels,32,kernel_size=8,stride=4)
         self.conv2 = nn.Conv2d(32,64,kernel_size=4,stride=2)
         self.conv3 = nn.Conv2d(64,64,kernel_size=3,stride=1)
-        self.fc1 = nn.Linear(22528,512)
-        self.fc2 = nn.Linear(512,outputs)
+        self.conv4 = nn.Conv2d(64,1024,kernel_size=7,stride=1)
+        self.fc1 = nn.Linear(163840,outputs)
 
     def forward(self, x):
         x = x.float() / 255
@@ -46,10 +46,10 @@ class DQN_img(nn.Module):
         x = F.relu(x)
         x = self.conv3(x)
         x = F.relu(x)
+        x = self.conv4(x)
+        x = F.relu(x)
         x = x.view(x.size(0),-1)
         x = self.fc1(x)
-        x = F.relu(x)
-        x = self.fc2(x)
         return x
 
 class DQN_ram(nn.Module):
@@ -84,7 +84,7 @@ class epsilon_scheduler():
                 eps_end=0.01, 
                 exploration_frames=1000000, 
                 smoothed_final_frames=25000000,
-                memory_start_capacity=1000):
+                memory_start_capacity=5000):
         
         self.eps_start = eps_start
         self.eps_mid_end = eps_mid_end

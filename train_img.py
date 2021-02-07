@@ -79,7 +79,6 @@ step_count = 0
 i_episode = 0
 ep_reward = -float('inf')
 sum_reward = 0
-sum_reward_window = 0
 best_avg_reward = -100
 logged_start = False
 
@@ -140,7 +139,6 @@ while i_episode < num_episodes:
 
     i_episode += 1
     sum_reward += episode_reward
-    sum_reward_window += episode_reward
     avg_reward = sum_reward/i_episode
     writer.add_scalar('Rewards', episode_reward, i_episode)
     writer.add_scalar('Avg rewards', avg_reward, i_episode)
@@ -165,7 +163,7 @@ while i_episode < num_episodes:
         torch.save(policy_net.state_dict(), 'checkpoints/' + name  + '/last/last_dqn-{}.pt'.format(env_name))
         print("Saved model checkpoint")
     
-    if (i_episode % model_save_interval == 0 or i_episode >= num_episodes) and avg_reward_window_value>best_avg_reward and i_episode>2000:
+    if (i_episode % model_save_interval == 0 or i_episode >= num_episodes) and avg_reward>best_avg_reward and i_episode>2000:
         print('Start saving model (best)')
         best_avg_reward = avg_reward
         torch.save(policy_net.state_dict(), 'checkpoints/' + name  + '/best/best_dqn-{}.pt'.format(env_name))

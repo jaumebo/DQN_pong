@@ -148,7 +148,7 @@ while i_episode < num_episodes:
         torch.save(policy_net.state_dict(), 'checkpoints/' + current_time  + '/last/last_dqn-{}.pt'.format(env_name))
         print("Saved model checkpoint")
     
-    if (i_episode % model_save_interval == 0 or i_episode >= num_episodes) and avg_reward_window_value>best_avg_reward and i_episode>2000:
+    if (i_episode % model_save_interval == 0 or i_episode >= num_episodes) and avg_reward>best_avg_reward and i_episode>2000:
         best_avg_reward = avg_reward
         torch.save(policy_net.state_dict(), 'checkpoints/' + current_time  + '/best/best_dqn-{}.pt'.format(env_name))
         print("Saved best model checkpoint")

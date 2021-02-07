@@ -48,7 +48,7 @@ num_episodes = 2000000  # number of episodes to train on
 batch_size = 32  # batch size for optimization
 lr = 1e-4  # learning rate
 target_update = 10000  # how often to update target net, in env steps
-memory_size = 100000 # how many steps we keep in memory
+memory_size = 80000 # how many steps we keep in memory
 memory_start_size = 5000
 skip_frames = 8 # frames skip from the game, this helps the agent to faster see more situations of the game
 

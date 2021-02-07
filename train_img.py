@@ -13,6 +13,7 @@ import numpy as np
 #Set device for training
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print('Using GPU:', ['no', 'yes'][int(torch.cuda.is_available())])
+print('Device: ' + device)
 
 #Set saving directories
 if not os.path.exists('checkpoints'):

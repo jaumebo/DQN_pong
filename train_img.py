@@ -48,7 +48,7 @@ num_episodes = 2000000  # number of episodes to train on
 batch_size = 32  # batch size for optimization
 lr = 1e-4  # learning rate
 target_update = 10000  # how often to update target net, in env steps
-memory_size = 1000000 # how many steps we keep in memory
+memory_size = 100000 # how many steps we keep in memory
 memory_start_size = 5000
 skip_frames = 8 # frames skip from the game, this helps the agent to faster see more situations of the game
 
@@ -124,7 +124,7 @@ while i_episode < num_episodes:
 
         # Perform one step of the optimization (on the policy network)
         if not logged_start:
-            print("Start training the network, actual steps: " + str(step_count) + ", actual steps: " + str(step_count))
+            print("Start training the network, actual episodes: " + str(i_episode) + ", actual steps: " + str(step_count))
             logged_start = True
         
         stop = train(policy_net, target_net, optimizer, memory, batch_size, gamma, device) 
@@ -149,13 +149,13 @@ while i_episode < num_episodes:
 
     # Evaluate greedy policy
     if i_episode % log_interval == 0 or i_episode >= num_episodes:
+        print('Start validation, episode: ' + str(i_episode))
 
         if i_episode % gif_interval == 0:
             savegif=True
         else:
             savegif=False
-        
-        print('Start validation, episode: ' + str(i_episode))
+
         ep_reward = test_agent(device, policy_net, 'gifs/' + name + '/test_gif_ep' + str(i_episode) + '.gif',env_name,savegif)
         writer.add_scalar('Validation value', ep_reward, i_episode)
         print('Episode {}\tSteps: {:.2f}k''\tAvg reward: {:.4f}''\tEval reward: {:.2f}''\tEpsilon value: {:.6f}'.format(i_episode, step_count/1000., avg_reward, ep_reward, eps_greedy_threshold))

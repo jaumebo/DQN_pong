@@ -14,11 +14,15 @@ class ReplayMemory(object):
         self.capacity = capacity
         self.memory = []
         self.position = 0
+        self.logged_full = False
 
     def push(self, *args):
         """Saves a transition."""
         if len(self.memory) < self.capacity:
             self.memory.append(None)
+        elif not self.logged_full:
+            print("Memory full! Start popping episodes.")
+            self.logged_full = True
         self.memory[self.position] = Transition(*args)
         # Update the pointer to the next position in the replay memory
         self.position = (self.position + 1) % self.capacity

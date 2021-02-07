@@ -1,6 +1,8 @@
 import os
 from datetime import datetime
 
+from comet_ml import Experiment
+
 import torch
 
 from src.dqn_funcs import *
@@ -10,7 +12,7 @@ from src.visualize import test_agent
 from torch.utils.tensorboard import SummaryWriter
 import numpy as np
 
-from comet_ml import Experiment
+
 
 experiment = Experiment(
     api_key="LVpVxTdy8PGwuQx7kHXrDfRMP",

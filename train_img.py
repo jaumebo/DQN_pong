@@ -62,8 +62,10 @@ torch.cuda.manual_seed(seed)
 n_actions = env.action_space.n
 
 # Create Policy Networks
-policy_net = DQN_img(3, n_actions).to(device)
-target_net = DQN_img(3, n_actions).to(device)
+policy_net = DQN_img(3, n_actions)
+policy_net.to(device)
+target_net = DQN_img(3, n_actions)
+target_net.to(device)
 target_net.load_state_dict(policy_net.state_dict())
 target_net.eval()
 
@@ -77,6 +79,10 @@ ep_reward = -float('inf')
 sum_reward = 0
 sum_reward_window = 0
 best_avg_reward = -100
+
+print("Preliminary example:")
+ep_reward = test_agent(device, policy_net, 'gifs/' + name + '/test_gif_ep' + str(i_episode) + '.gif',env_name,True)
+print("First ep_reward: " + str(ep_reward))
 
 while i_episode < num_episodes:
     # Initialize the environment and state

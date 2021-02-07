@@ -133,7 +133,7 @@ def train(policy_net, target_net, optimizer, memory, batch_size, gamma, device):
         device=device, 
         dtype=torch.bool)
     non_final_next_states = torch.cat(
-        [s for s in batch.next_state if s is not None])
+        [s for s in batch.next_state if s is not None]).to(device)
     state_batch = torch.cat(batch.state).to(device)
     action_batch = torch.cat(batch.action)
     reward_batch = torch.cat(batch.reward)
@@ -150,8 +150,7 @@ def train(policy_net, target_net, optimizer, memory, batch_size, gamma, device):
     # state value or 0 in case the state was final.
     # Note the call to detach() on Q(s_{t+1}), which prevents gradient flow
     next_state_values = torch.zeros(batch_size, device=device)
-    next_state_values[non_final_mask] = target_net(
-        non_final_next_states).max(1)[0].detach()
+    next_state_values[non_final_mask] = target_net(non_final_next_states).max(1)[0].detach()
     # Compute targets for Q values: y_t = r_t + max(Q_{t+1})
     expected_state_action_values = reward_batch + (next_state_values * gamma)
 

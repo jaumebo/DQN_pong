@@ -10,6 +10,14 @@ from src.visualize import test_agent
 from torch.utils.tensorboard import SummaryWriter
 import numpy as np
 
+from comet_ml import Experiment
+
+experiment = Experiment(
+    api_key="LVpVxTdy8PGwuQx7kHXrDfRMP",
+    project_name="DQN_pong",
+    workspace="jaumebo",
+)
+
 #Set device for training
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print('Using GPU:', ['no', 'yes'][int(torch.cuda.is_available())])

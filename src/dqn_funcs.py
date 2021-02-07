@@ -116,7 +116,8 @@ def select_action(policy, state, eps_greedy_threshold, n_actions, device):
             # t.max(1) will return largest column value of each row.
             # second column on max result is index of where max element was
             # found, so we pick action with the larger expected reward.
-            action = policy(state).max(1)[1].view(1, 1)
+            state_cuda = state.to(device)
+            action = policy(state_cuda).max(1)[1].view(1, 1)
     else:
         action = torch.tensor([[random.randrange(n_actions)]], device=device, dtype=torch.long)
     return action
@@ -133,8 +134,8 @@ def train(policy_net, target_net, optimizer, memory, batch_size, gamma, device):
         device=device, 
         dtype=torch.bool)
     non_final_next_states = torch.cat(
-        [s for s in batch.next_state if s is not None])
-    state_batch = torch.cat(batch.state)
+        [s for s in batch.next_state if s is not None]).to(device)
+    state_batch = torch.cat(batch.state).to(device)
     action_batch = torch.cat(batch.action)
     reward_batch = torch.cat(batch.reward)
 

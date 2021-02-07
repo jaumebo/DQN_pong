@@ -153,6 +153,10 @@ while i_episode < num_episodes:
     writer.add_scalar('Rewards', episode_reward, i_episode)
     writer.add_scalar('Avg rewards', avg_reward, i_episode)
     writer.add_scalar('Epsilon value', eps_greedy_threshold, i_episode)
+
+    experiment.log_metric('Rewards', episode_reward, step=i_episode)
+    experiment.log_metric('Avg rewards', avg_reward, step=i_episode)
+    experiment.log_metric('Epsilon value', eps_greedy_threshold, step=i_episode)
     
 
     # Evaluate greedy policy
@@ -166,6 +170,7 @@ while i_episode < num_episodes:
 
         ep_reward = test_agent(device, policy_net, 'gifs/' + name + '/test_gif_ep' + str(i_episode) + '.gif',env_name,savegif)
         writer.add_scalar('Validation value', ep_reward, i_episode)
+        experiment.log_metric('Validation value', ep_reward, step=i_episode)
         print('Episode {}\tSteps: {:.2f}k''\tAvg reward: {:.4f}''\tEval reward: {:.2f}''\tEpsilon value: {:.6f}'.format(i_episode, step_count/1000., avg_reward, ep_reward, eps_greedy_threshold))
 
     if i_episode % model_save_interval == 0 or i_episode >= num_episodes:

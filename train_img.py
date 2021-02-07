@@ -40,6 +40,7 @@ writer = SummaryWriter('logs/' + name)
 #Hyperparameters
 env_name = 'Pong-v0'
 gamma = 0.99  # discount factor
+gamma = gamma.to(device)
 seed = 123  # random seed
 log_interval = 100  # controls how often we log progress, in episodes
 gif_interval = 400
@@ -81,6 +82,7 @@ ep_reward = -float('inf')
 sum_reward = 0
 sum_reward_window = 0
 best_avg_reward = -100
+logged_start = False
 
 print("Preliminary example:")
 ep_reward = test_agent(device, policy_net, 'gifs/' + name + '/test_gif_ep' + str(i_episode) + '.gif',env_name,True)
@@ -122,6 +124,10 @@ while i_episode < num_episodes:
             continue
 
         # Perform one step of the optimization (on the policy network)
+        if not logged_start:
+            print("Start training the network")
+            logged_start = True
+        
         stop = train(policy_net, target_net, optimizer, memory, batch_size, gamma, device) 
 
         # Update the target network, copying all weights and biases in DQN

@@ -137,7 +137,7 @@ def train(policy_net, target_net, optimizer, memory, batch_size, gamma, device):
         [s for s in batch.next_state if s is not None]).to(device)
     state_batch = torch.cat(batch.state).to(device)
     action_batch = torch.cat(batch.action)
-    reward_batch = torch.cat(batch.reward)
+    reward_batch = torch.cat(batch.reward).to(device)
 
     # Compute Q(s_t, a) - the model computes Q(s_t) for all a, then we select 
     # the columns of actions taken. These are the actions which would've been 
@@ -157,7 +157,7 @@ def train(policy_net, target_net, optimizer, memory, batch_size, gamma, device):
 
     # Compute Huber loss between predicted Q values and targets y
     loss = F.smooth_l1_loss(
-        state_action_values, expected_state_action_values.unsqueeze(1))
+        state_action_values, expected_state_action_values.unsqueeze(1)).to(device)
 
     # Take an SGD step
     optimizer.zero_grad()

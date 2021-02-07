@@ -25,7 +25,7 @@ def test_agent(device,policy_net=None,path='test.gif',env_name="Pong-ram-v0",sav
             ac = env.action_space.sample()
         else:
             #state = torch.from_numpy(obs).float().unsqueeze(0).to(device)
-            state = dqn_funcs.get_state_img(obs)
+            state = dqn_funcs.get_state_img(obs).to(device)
             ac = dqn_funcs.select_action(policy_net, state, 0., 1,device).item()
         
         #Obtain the new state, reward and whether the episode has terminated

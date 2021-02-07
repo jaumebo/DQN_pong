@@ -133,7 +133,7 @@ def train(policy_net, target_net, optimizer, memory, batch_size, gamma, device):
         device=device, 
         dtype=torch.bool)
     non_final_next_states = torch.cat(
-        [s for s in batch.next_state if s is not None]).to(device)
+        [s for s in batch.next_state if s is not None])
     state_batch = torch.cat(batch.state).to(device)
     action_batch = torch.cat(batch.action)
     reward_batch = torch.cat(batch.reward)

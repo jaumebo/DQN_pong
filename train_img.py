@@ -82,7 +82,7 @@ while i_episode < num_episodes:
     # Initialize the environment and state
     state = env.reset()
     done = False
-    state = get_state_img(state)
+    state = get_state_img(state).to(device)
     episode_reward = 0
 
     while not done:
@@ -95,7 +95,7 @@ while i_episode < num_episodes:
             next_state, reward, done, _ = env.step(action.item())            
 
             # Bookkeeping
-            next_state = get_state_img(next_state)
+            next_state = get_state_img(next_state).to(device)
             reward = reward_shaper(reward, done)
             episode_reward += reward
             reward = torch.tensor([reward], device=device)

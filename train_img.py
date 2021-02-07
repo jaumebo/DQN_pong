@@ -40,7 +40,6 @@ writer = SummaryWriter('logs/' + name)
 #Hyperparameters
 env_name = 'Pong-v0'
 gamma = 0.99  # discount factor
-gamma = gamma.to(device)
 seed = 123  # random seed
 log_interval = 100  # controls how often we log progress, in episodes
 gif_interval = 400

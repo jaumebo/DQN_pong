@@ -137,7 +137,7 @@ def train(policy_net, target_net, optimizer, memory, batch_size, gamma, device):
         [s for s in batch.next_state if s is not None]).to(device)
     state_batch = torch.cat(batch.state).to(device)
     action_batch = torch.cat(batch.action)
-    reward_batch = torch.cat(batch.reward).to(device)
+    reward_batch = torch.cat(batch.reward)
 
     # Compute Q(s_t, a) - the model computes Q(s_t) for all a, then we select 
     # the columns of actions taken. These are the actions which would've been 

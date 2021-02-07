@@ -124,14 +124,16 @@ while i_episode < num_episodes:
 
         # Perform one step of the optimization (on the policy network)
         if not logged_start:
-            print("Start training the network")
+            print("Start training the network, actual steps: " + str(step_count) + ", actual steps: " + str(step_count))
             logged_start = True
         
         stop = train(policy_net, target_net, optimizer, memory, batch_size, gamma, device) 
 
         # Update the target network, copying all weights and biases in DQN
         if step_count % target_update == 0:
+            print("Update target network, episode: " + str(i_episode))
             target_net.load_state_dict(policy_net.state_dict())
+            print("Finished updating the network")
 
     if step_count<memory_start_size:
         continue
@@ -153,15 +155,18 @@ while i_episode < num_episodes:
         else:
             savegif=False
         
+        print('Start validation, episode: ' + str(i_episode))
         ep_reward = test_agent(device, policy_net, 'gifs/' + name + '/test_gif_ep' + str(i_episode) + '.gif',env_name,savegif)
         writer.add_scalar('Validation value', ep_reward, i_episode)
         print('Episode {}\tSteps: {:.2f}k''\tAvg reward: {:.4f}''\tEval reward: {:.2f}''\tEpsilon value: {:.6f}'.format(i_episode, step_count/1000., avg_reward, ep_reward, eps_greedy_threshold))
 
     if i_episode % model_save_interval == 0 or i_episode >= num_episodes:
+        print('Start saving model (last)')
         torch.save(policy_net.state_dict(), 'checkpoints/' + name  + '/last/last_dqn-{}.pt'.format(env_name))
         print("Saved model checkpoint")
     
     if (i_episode % model_save_interval == 0 or i_episode >= num_episodes) and avg_reward_window_value>best_avg_reward and i_episode>2000:
+        print('Start saving model (best)')
         best_avg_reward = avg_reward
         torch.save(policy_net.state_dict(), 'checkpoints/' + name  + '/best/best_dqn-{}.pt'.format(env_name))
         print("Saved best model checkpoint")

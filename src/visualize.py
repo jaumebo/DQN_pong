@@ -4,7 +4,7 @@ import torch
 
 from src import dqn_funcs
 
-def test_gif(device,policy_net=None,path='test.gif',env_name="Pong-ram-v0"):
+def test_agent(device,policy_net=None,path='test.gif',env_name="Pong-ram-v0",savegif=True):
 
     env = gym.make(env_name)
 
@@ -24,7 +24,8 @@ def test_gif(device,policy_net=None,path='test.gif',env_name="Pong-ram-v0"):
             #Sample a random action from the environment
             ac = env.action_space.sample()
         else:
-            state = torch.from_numpy(obs).float().unsqueeze(0).to(device)
+            #state = torch.from_numpy(obs).float().unsqueeze(0).to(device)
+            state = dqn_funcs.get_state_img(obs)
             ac = dqn_funcs.select_action(policy_net, state, 0., 1,device).item()
         
         #Obtain the new state, reward and whether the episode has terminated
@@ -39,7 +40,8 @@ def test_gif(device,policy_net=None,path='test.gif',env_name="Pong-ram-v0"):
     env.close()
 
     # Save to GIF
-    imageio.mimsave(path, images, fps=60)
+    if savegif:
+        imageio.mimsave(path, images, fps=60)
 
     return total_rew
 

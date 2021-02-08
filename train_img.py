@@ -57,10 +57,17 @@ model_save_interval = 400 # controls how often we save the model at checkpoints 
 num_episodes = 2000000  # number of episodes to train on
 batch_size = 32  # batch size for optimization
 lr = 1e-4  # learning rate
-target_update = 10000  # how often to update target net, in env steps
+target_update = 100  # how often to update target net, in env steps
 memory_size = 80000 # how many steps we keep in memory
 memory_start_size = 5000
-skip_frames = 8 # frames skip from the game, this helps the agent to faster see more situations of the game
+skip_frames = 4 # frames skip from the game, this helps the agent to faster see more situations of the game
+
+experiment.log_parameter('skip_frames',skip_frames)
+experiment.log_parameter('memory_size',memory_size)
+experiment.log_parameter('batch_size',batch_size)
+experiment.log_parameter('lr',lr)
+experiment.log_parameter('gamma',gamma)
+experiment.log_parameter('target_update',target_update)
 
 # Create environment
 env = gym.make(env_name)
@@ -156,7 +163,7 @@ while i_episode < num_episodes:
 
     experiment.log_metric('Rewards', episode_reward, step=i_episode)
     experiment.log_metric('Avg rewards', avg_reward, step=i_episode)
-    experiment.log_metric('Epsilon value', eps_greedy_threshold, step=i_episode)
+    experiment.log_parameter('Epsilon value', eps_greedy_threshold, step=step_count)
     
 
     # Evaluate greedy policy

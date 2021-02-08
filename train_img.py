@@ -147,9 +147,7 @@ while i_episode < num_episodes:
 
         # Update the target network, copying all weights and biases in DQN
         if step_count % target_update == 0:
-            print("Update target network, episode: " + str(i_episode))
             target_net.load_state_dict(policy_net.state_dict())
-            print("Finished updating the network")
 
     if step_count<memory_start_size:
         continue

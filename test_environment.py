@@ -3,7 +3,7 @@ import gym
 # Choose the Cart-Pole environment from the OpenAI Gym
 
 
-env = gym.make("Pong-ram-v0")
+env = gym.make("Pong-v0")
 obs = env.reset()
 
 # Initialize the variables done (breaks loop) and total_rew (reward)

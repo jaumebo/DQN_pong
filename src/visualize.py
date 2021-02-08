@@ -4,7 +4,7 @@ import torch
 
 from src import dqn_funcs
 
-def test_agent(device,policy_net=None,path='test.gif',env_name="Pong-ram-v0",savegif=True):
+def test_agent(device,policy_net=None,path='test.gif',env_name="Pong-v0",savegif=True):
 
     env = gym.make(env_name)
 

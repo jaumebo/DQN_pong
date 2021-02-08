@@ -39,8 +39,8 @@ class DQN_img(nn.Module):
         self.conv1 = nn.Conv2d(in_channels,32,kernel_size=8,stride=4)
         self.conv2 = nn.Conv2d(32,64,kernel_size=4,stride=2)
         self.conv3 = nn.Conv2d(64,64,kernel_size=3,stride=1)
-        self.conv4 = nn.Conv2d(64,1024,kernel_size=7,stride=1)
-        self.fc1 = nn.Linear(163840,outputs)
+        self.fc1 = nn.Linear(22528,512)
+        self.fc2 = nn.Linear(512,outputs)
 
     def forward(self, x):
         x = x.float() / 255
@@ -50,10 +50,10 @@ class DQN_img(nn.Module):
         x = F.relu(x)
         x = self.conv3(x)
         x = F.relu(x)
-        x = self.conv4(x)
-        x = F.relu(x)
         x = x.view(x.size(0),-1)
         x = self.fc1(x)
+        x = F.relu(x)
+        x = self.fc2(x)
         return x
 
 class DQN_ram(nn.Module):

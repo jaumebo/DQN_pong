@@ -57,9 +57,9 @@ model_save_interval = 400 # controls how often we save the model at checkpoints 
 num_episodes = 2000000  # number of episodes to train on
 batch_size = 32  # batch size for optimization
 lr = 1e-4  # learning rate
-target_update = 100  # how often to update target net, in env steps
+target_update = 1000  # how often to update target net, in env steps
 memory_size = 80000 # how many steps we keep in memory
-memory_start_size = 5000
+memory_start_size = 10000
 skip_frames = 4 # frames skip from the game, this helps the agent to faster see more situations of the game
 
 experiment.log_parameter('skip_frames',skip_frames)

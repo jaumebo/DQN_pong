@@ -1,8 +1,6 @@
 import os
 from datetime import datetime
 
-from comet_ml import Experiment
-
 import torch
 
 from src.dqn_funcs import *
@@ -11,14 +9,6 @@ from src.visualize import test_agent
 
 from torch.utils.tensorboard import SummaryWriter
 import numpy as np
-
-
-
-experiment = Experiment(
-    api_key="LVpVxTdy8PGwuQx7kHXrDfRMP",
-    project_name="DQN_pong",
-    workspace="jaumebo",
-)
 
 #Set device for training
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -61,13 +51,6 @@ target_update = 1000  # how often to update target net, in env steps
 memory_size = 80000 # how many steps we keep in memory
 memory_start_size = 10000
 skip_frames = 4 # frames skip from the game, this helps the agent to faster see more situations of the game
-
-experiment.log_parameter('skip_frames',skip_frames)
-experiment.log_parameter('memory_size',memory_size)
-experiment.log_parameter('batch_size',batch_size)
-experiment.log_parameter('lr',lr)
-experiment.log_parameter('gamma',gamma)
-experiment.log_parameter('target_update',target_update)
 
 # Create environment
 env = gym.make(env_name)
@@ -159,11 +142,6 @@ while i_episode < num_episodes:
     writer.add_scalar('Avg rewards', avg_reward, i_episode)
     writer.add_scalar('Epsilon value', eps_greedy_threshold, i_episode)
 
-    experiment.log_metric('Rewards', episode_reward, step=i_episode)
-    experiment.log_metric('Avg rewards', avg_reward, step=i_episode)
-    experiment.log_parameter('Epsilon value', eps_greedy_threshold, step=step_count)
-    
-
     # Evaluate greedy policy
     if i_episode % log_interval == 0 or i_episode >= num_episodes:
         print('Start validation, episode: ' + str(i_episode))
@@ -175,7 +153,6 @@ while i_episode < num_episodes:
 
         ep_reward = test_agent(device, policy_net, 'gifs/' + name + '/test_gif_ep' + str(i_episode) + '.gif',env_name,savegif)
         writer.add_scalar('Validation value', ep_reward, i_episode)
-        experiment.log_metric('Validation value', ep_reward, step=i_episode)
         print('Episode {}\tSteps: {:.2f}k''\tAvg reward: {:.4f}''\tEval reward: {:.2f}''\tEpsilon value: {:.6f}'.format(i_episode, step_count/1000., avg_reward, ep_reward, eps_greedy_threshold))
 
     if i_episode % model_save_interval == 0 or i_episode >= num_episodes:
